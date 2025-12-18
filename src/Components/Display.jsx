@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Question from './Question';
 import questionsData from "./QuestionsData.js";
+import Button from './Button.jsx';
 
 const Display = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -10,17 +11,15 @@ const Display = () => {
     const [showResults, setShowResults] = useState(false);
 
     const currentQuestion = questionsData[currentIndex];
+
     const hasPrev = currentIndex > 0;
     const hasNext = currentIndex < questionsData.length - 1;
 
-    const btnClass =
-        "px-4 py-2 rounded-md bg-[#646cff] hover:bg-[#747bff] transition disabled:opacity-50 disabled:cursor-not-allowed";
-
     const score = showResults
         ? selectedAnswers.reduce(
-              (acc, ans, i) => ans === questionsData[i].answer ? acc + 1 : acc,
-              0
-          )
+            (acc, ans, i) => ans === questionsData[i].answer ? acc + 1 : acc,
+            0
+        )
         : 0;
 
     function onSelected(answer) {
@@ -37,8 +36,16 @@ const Display = () => {
             alert("Please attempt all questions before submitting.");
             return;
         }
+        
         setShowResults(true);
     }
+
+    function restartQuiz() {
+        setSelectedAnswers(Array(questionsData.length).fill(null));
+        setCurrentIndex(0);
+        setShowResults(false);
+    }
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
@@ -47,40 +54,29 @@ const Display = () => {
 
                 <Question
                     current={currentQuestion}
-                    selected={selectedAnswers[currentIndex]}
                     onSelected={onSelected}
+                    selected={selectedAnswers[currentIndex]}
                     showResults={showResults}
                 />
 
                 <div className="flex justify-between items-center mt-6 gap-2">
-                    <button
-                        onClick={() => setCurrentIndex(i => i - 1)}
-                        disabled={!hasPrev}
-                        className={btnClass}
-                    >
-                        Prev
-                    </button>
+                    <Button onClick={() => setCurrentIndex(i => i - 1)} disabled={!hasPrev} value="Prev" />
 
                     <h4 className="text-lg font-medium">
                         Score: {score}/{questionsData.length}
                     </h4>
 
-                    <button
-                        onClick={() => setCurrentIndex(i => i + 1)}
-                        disabled={!hasNext}
-                        className={btnClass}
-                    >
-                        Next
-                    </button>
+                    <Button onClick={() => setCurrentIndex(i => i + 1)} disabled={!hasNext} value="Next" />
 
-                    <button
-                        onClick={handleResults}
-                        disabled={showResults}
-                        className={btnClass}
-                    >
-                        Submit
-                    </button>
+                    {!showResults && (
+                        <Button onClick={handleResults} value="Submit" />
+                    )}
+
+                    {showResults && (
+                        <Button onClick={restartQuiz} value="Restart Quiz" />
+                    )}
                 </div>
+
             </div>
         </div>
     );

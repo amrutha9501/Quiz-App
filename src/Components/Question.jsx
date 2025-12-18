@@ -1,27 +1,20 @@
 import React from 'react';
 
 const Question = ({ current, onSelected, selected, showResults }) => {
-    const isAttempted = selected !== null;
 
     return (
         <>
             <h3 className="text-xl mb-4">{current.question}</h3>
             <ul className="space-y-3">
                 {current.options.map(option => {
+
                     let bgClass = "bg-gray-700 hover:bg-gray-600";
 
-                    // before submit
-                    if (!showResults && selected === option) {
+                    if (showResults) {
+                        if (option === current.answer) bgClass = "bg-green-500";
+                        else if (selected === option) bgClass = "bg-red-500";
+                    } else if (selected === option) {
                         bgClass = "bg-[#747bff]";
-                    }
-
-                    // after submit
-                    if (showResults && isAttempted) {
-                        if (option === current.answer) {
-                            bgClass = "bg-green-500";
-                        } else if (selected === option) {
-                            bgClass = "bg-red-500";
-                        }
                     }
 
                     return (
